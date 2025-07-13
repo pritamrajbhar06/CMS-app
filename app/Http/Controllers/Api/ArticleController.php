@@ -21,13 +21,20 @@ class ArticleController extends Controller
 
     public function index()
     {
-        $articles = $this->articleService->getAllArticles(auth()->user());
+        $filters = [
+            'category' => request('category_id'),
+            'status' => request('status'),
+            'start_date' => request('start_date'),
+            'end_date' => request('end_date'),
+        ];
+
+        $articles = $this->articleService->getAllArticles(auth()->user(), $filters);
 
         if ($articles->isEmpty()) {
             return response()->json(['message' => 'No articles found'], 404);
         }
 
-        return response()->json($articles);
+        return ArticleResource::collection($articles);
     }
 
     public function store(Request $request)

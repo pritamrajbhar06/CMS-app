@@ -12,13 +12,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Category routes
     Route::middleware('role:admin')->group(function () {
         Route::post('/categories', [\App\Http\Controllers\Api\CategoryController::class, 'store']);
-        Route::get('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::class, 'show']);
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::class, 'destroy']);
     });
 
-    // Author can just access categories
+    // Author can just access one/more categories
     Route::get('/categories', [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+    Route::get('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::class, 'show']);
 
     // Article routes
     Route::get('/articles', [ArticleController::class, 'index']);
