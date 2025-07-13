@@ -22,17 +22,11 @@ class AdminAndAuthorSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Author User',
+            'name' => 'Author',
             'email' => 'author@example.com',
             'password' => bcrypt('aaaaaaaa'),
             'user_type' => 'author'
         ]);
 
-
-        // Api user seeding
-        ApiUser::create([
-            'username' => 'test',
-            'password' => bcrypt('password123'), // Use bcrypt for password hashing
-        ]);
     }
 }

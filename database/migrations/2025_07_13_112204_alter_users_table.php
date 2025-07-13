@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('user_type')->default('author')->after('email');
+            $table->string('api_token')->nullable()->after('user_type')->unique();
         });
     }
 
@@ -21,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['user_type', 'api_token', 'token_expires_at']);
+        });
     }
 };

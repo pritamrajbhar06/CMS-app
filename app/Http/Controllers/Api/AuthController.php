@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\ApiUserService;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    protected $apiUserService;
+    protected $userService;
 
-    public function __construct(ApiUserService $apiUserService)
+    public function __construct(UserService $userService)
     {
-        $this->apiUserService = $apiUserService;
+        $this->userService = $userService;
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required',
+            'email' => 'required',
             'password' => 'required'
         ]);
 
         // Use service to get user
-        $user = $this->apiUserService->getApiUserByUsername($request->username);
+        $user = $this->userService->getApiUserByEmail($request->email);
 
         if (!$user || Hash::check($request->password, $user->password) === false) {
             return response()->json(['message' => 'Invalid credentials'], 401);
@@ -32,9 +32,6 @@ class AuthController extends Controller
         // Create Sanctum token
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        // Save token in api_users table
-        $user->api_token = $token;
-        $user->save();
 
         return response()->json([
             'message' => 'Login successful',
@@ -48,6 +45,8 @@ class AuthController extends Controller
 
         if ($user) {
             $user->currentAccessToken()->delete();
+            $user->tokens()->delete();
+
             return response()->json(['message' => 'Logged out successfully']);
         }
 
