@@ -15,4 +15,9 @@ class Article extends Model
         'published_at',
         'author_id'
     ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }

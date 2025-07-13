@@ -23,4 +23,15 @@ enum ArticleStatus: int
         return null; // or throw an exception if preferred
     }
 
+
+    public static function label(int $value): string
+    {
+        return match ($value) {
+            self::Draft->value => 'Draft',
+            self::Published->value => 'Published',
+            self::Archived->value => 'Archived',
+            default => 'Unknown Status',
+        };
+    }
+
 }

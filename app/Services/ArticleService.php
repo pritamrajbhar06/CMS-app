@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Article;
+use Illuminate\Database\Eloquent\Collection;
 
 class ArticleService
 {
@@ -11,6 +12,16 @@ class ArticleService
         return Article::create($data);
     }
 
+    public function getAllArticles($user): Collection
+    {
+        $query = Article::with('categories', 'author');
+
+        if ($user->role === 'author') {
+            $query->where('author_id', $user->id);
+        }
+
+        return $query->latest()->get();
+    }
 
     public function update(Article $article, array $data)
     {
@@ -18,9 +29,15 @@ class ArticleService
         return $article;
     }
 
-    public function getArticleById(int $id): ?Article
+    public function getArticleById(int $id, $user): ?Article
     {
-        return Article::find($id);
+        $query = Article::with('categories', 'author');
+
+        if ($user->role === 'author') {
+            $query->where('author_id', $user->id);
+        }
+
+        return $query->find($id);
     }
 
     public function checkIfArticleSlugExists(string $slug): bool
