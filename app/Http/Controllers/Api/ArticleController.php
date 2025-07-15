@@ -39,13 +39,17 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
+        if (!$request->all()) {
+            return response()->json(['message' => 'Request body is empty'], 400);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'categories' => 'array',
+            'categories' => 'required|array',
             'categories.*' => 'exists:categories,id',
             'status' => 'required|in:Draft,Published,Archived',
-            'published_at' => 'nullable|date',
+            'published_at' => 'required|date',
         ]);
 
         $article = $this->articleService->create([
@@ -53,12 +57,11 @@ class ArticleController extends Controller
             'content' => $request['content'],
             'author_id' => auth()->id(),
             'status' => ArticleStatus::value($request['status']),
-            'published_at' => $request['published_at'] ?? null,
+            'published_at' => \Carbon\Carbon::parse($request['published_at'])->format('Y-m-d'),
         ]);
 
         $article->categories()->attach($request['categories']);
 
-        // Dispatch jobs
         GenerateSlug::dispatch($article->id);
         GenerateSummary::dispatch($article->id);
 

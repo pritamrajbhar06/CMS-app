@@ -48,12 +48,12 @@ class ArticleService
         return $article;
     }
 
-    public function getArticleById(int $id, $user): ?Article
+    public function getArticleById(int $id, $user= null): ?Article
     {
         $query = Article::with('categories', 'author');
 
-        if ($user->role === 'author') {
-            $query->where('author_id', $user->id);
+        if ($user && $user->role === 'author') {
+            $query->where('user_id', $user->id);
         }
 
         return $query->find($id);

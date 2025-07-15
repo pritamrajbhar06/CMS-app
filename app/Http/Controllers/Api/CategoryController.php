@@ -31,6 +31,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->all()) {
+            return response()->json(['message' => 'Request body is empty'], 400);
+        }
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
         ]);
@@ -59,6 +62,10 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if (!$request->all()) {
+            return response()->json(['message' => 'Request body is empty'], 400);
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
