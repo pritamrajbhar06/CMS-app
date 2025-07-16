@@ -18,7 +18,7 @@ class ArticleService
     {
         $query = Article::with('categories', 'author');
 
-        if ($user->role === 'author') {
+        if ($user->user_type === 'author') {
             $query->where('author_id', $user->id);
         }
 
