@@ -43,6 +43,8 @@ php artisan db:seed --class=AdminAndAuthorSeeder
 
 php artisan serve
 
+Follow the link provided in the terminal to verify the application is running as expected.
+
 #### 5️⃣ OpenAI Integration
 
 Using this link register/Login and Create API Key -> https://platform.openai.com/settings/organization/api-keys
