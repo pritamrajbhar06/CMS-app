@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ArticleStatus;
 use App\Models\Article;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
 class ArticleService
 {
@@ -23,7 +24,7 @@ class ArticleService
 
         if (!empty($filters['category'])) {
             $query->whereHas('categories', function ($q) use ($filters) {
-                $q->where('categories_id', $filters['category']);
+                $q->where('categories.id', $filters['category']);
             });
         }
 
@@ -32,11 +33,11 @@ class ArticleService
         }
 
         if (!empty($filters['start_date'])) {
-            $query->where('published_at', '>=', $filters['start_date']);
+            $query->where('published_at', '>=', Carbon::parse($filters['start_date'])->format('Y-m-d'));
         }
 
         if (!empty($filters['end_date'])) {
-            $query->where('published_at', '<=', $filters['end_date']);
+            $query->where('published_at', '<=', Carbon::parse($filters['end_date'])->format('Y-m-d'));
         }
 
         return $query->latest()->get();
