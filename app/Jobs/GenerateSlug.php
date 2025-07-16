@@ -13,13 +13,18 @@ class GenerateSlug implements ShouldQueue
 
     protected $articleId;
 
+    public function __construct(int $articleId)
+    {
+        $this->articleId = $articleId;
+    }
+
     /**
      * Execute the job.
      */
     public function handle(): void
     {
         $articleService = new ArticleService();
-        $article = $articleService->getArticleById($this->articleId);
+        $article = $articleService->getArticleById($this->articleId, null);
 
         $messages = 
             ['role' => 'user', 'content' => ' generate a unique slug based on the title and content of the article: ' . $article->title . ' ' . $article->content];

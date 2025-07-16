@@ -17,6 +17,10 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        if (!$request->all()) {
+            return response()->json(['message' => 'Request body is empty'], 400);
+        }
+
         $request->validate([
             'email' => 'required',
             'password' => 'required'
