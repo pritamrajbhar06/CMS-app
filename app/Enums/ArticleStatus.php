@@ -8,9 +8,9 @@ enum ArticleStatus: int
 {
     use Enhancers;
 
-    case Draft = 0;
-    case Published = 1;
-    case Archived = 2;
+    case Draft = 1;
+    case Published = 2;
+    case Archived = 3;
 
     public static function value(?string $status = null): ?int
     {
