@@ -32,7 +32,7 @@ class GenerateSlug implements ShouldQueue
         $result = (new OpenAiService())->generateText($messages);
 
         if(empty($result)) {
-            // Handle the case where no slug was generated
+            Log::error('Failed to generate slug for article ID: ' . $this->articleId);
             return;
         }
 

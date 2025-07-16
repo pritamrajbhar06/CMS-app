@@ -82,13 +82,13 @@ class ArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'categories' => 'array',
+        $validatedData = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'content' => 'sometimes|required|string',
+            'categories' => 'sometimes|array',
             'categories.*' => 'exists:categories,id',
-            'status' => 'required|in:Draft,Published,Archived',
-            'published_at' => 'nullable|date',
+            'status' => 'sometimes|required|in:Draft,Published,Archived',
+            'published_at' => 'sometimes|required|date',
         ]);
 
         $article = $this->articleService->getArticleById($id, auth()->user());
@@ -97,19 +97,31 @@ class ArticleController extends Controller
             return response()->json(['message' => 'Article not found'], 404);
         }
 
-        $updatedArticle = $this->articleService->update($article, [
-            'title' => $request['title'],
-            'content' => $request['content'],
-            'status' => ArticleStatus::value($request['status']),
-            'published_at' => $request['published_at'] ?? null,
-            'author_id' => auth()->user()->id,
-        ]);
+        if($request->has('status')) {
+            $validatedData['status'] = ArticleStatus::value($validatedData['status']);
+        }
 
-        $updatedArticle->categories()->sync($request['categories']);
+        $updatedArticle = $this->articleService->update($article->id, $validatedData);
 
-        // Dispatch jobs
-        GenerateSlug::dispatch($updatedArticle->id);
-        GenerateSummary::dispatch($updatedArticle->id);
+        // Update categories if provided
+        if ($request->has('categories')) {
+            $updatedArticle->categories()->sync($request['categories']);
+        }
+
+        // Check if title or content has changed
+        $titleChanged   = isset($validatedData['title']) && $validatedData['title'] !== $article->title;
+        $contentChanged = isset($validatedData['content']) && $validatedData['content'] !== $article->content;
+
+        // Dispatch jobs only if title or content has changed
+        if ($titleChanged && $contentChanged) {
+            GenerateSlug::dispatch($updatedArticle->id);
+        }
+
+        // Dispatch summary generation job if only content has changed
+        if ($contentChanged) {
+            GenerateSummary::dispatch($updatedArticle->id);
+        }
+
 
         return response()->json(['message' => 'Article updated. Slug and summary generation is in progress.']);
     }

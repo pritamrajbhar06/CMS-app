@@ -42,9 +42,9 @@ class ArticleService
         return $query->latest()->get();
     }
 
-    public function update(Article $article, array $data)
+    public function update($id, array $data)
     {
-        $article->update($data);
+        $article = Article::where('id', $id)->update($data);
         return $article;
     }
 
