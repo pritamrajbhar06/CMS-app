@@ -51,7 +51,7 @@ Using this link register/Login and Create API Key -> https://platform.openai.com
 
 Note : Trial version is available for few requests after that you need to add billing details.
 
-Update the .env file with your OpenAI API key
+Update the .env file with your OpenAI API key (OPENAI_API_KEY)
 
 #### 6️⃣ API Testing
 
@@ -60,7 +60,7 @@ Use Postman to test the API endpoints. Import the provided Postman collection at
 ### 7️⃣ Run Tests
 Run the Login Request Tests first and then add that token to the other requests in Bear Token Authorization header in Postman.
 
-Also Set Header `Content-Type` to `application/json` for all requests.
+Also Set Header `Accept` to `application/json` for all requests.
 
 Run the requests and update values as needed.(e.g. article, category, etc.)
 
